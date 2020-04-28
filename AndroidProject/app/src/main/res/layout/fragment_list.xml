@@ -1,63 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="100dp"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="0dp" >
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        android:id="@+id/ContactID"
         android:clickable="true"
         android:focusable="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="?android:attr/selectableItemBackground">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:orientation="horizontal">
+        <TextView
+            android:id="@+id/ContactPhone"
+            style="@style/MyText"
+            android:layout_width="271dp"
+            android:layout_height="23dp"
+            android:layout_marginTop="16dp"
+            android:paddingLeft="8dp"
+            android:text="@string/phone"
+            app:layout_constraintStart_toEndOf="@+id/ContactPhoto"
+            app:layout_constraintTop_toBottomOf="@+id/ContactName" />
 
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="275dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:srcCompat="@android:drawable/ic_menu_gallery" />
+        <ImageView
+            android:id="@+id/ContactPhoto"
+            android:layout_width="116dp"
+            android:layout_height="104dp"
+            android:layout_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_gallery" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
+        <TextView
+            android:id="@+id/ContactName"
+            style="@style/MyText"
+            android:layout_width="272dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="16dp"
+            android:paddingLeft="8dp"
+            android:text="@string/name"
+            android:textAllCaps="true"
+            app:layout_constraintStart_toEndOf="@+id/ContactPhoto"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <TextView
-                    android:id="@+id/textView8"
-                    style="@style/MyText"
-                    android:layout_width="match_parent"
-                    android:layout_height="41dp"
-                    android:layout_marginTop="13dp"
-                    android:layout_marginRight="15dp"
-                    android:layout_marginBottom="12dp"
-                    android:paddingLeft="8dp"
-                    android:paddingTop="5dp"
-                    android:text="@string/name"
-                    android:textAllCaps="true" />
-
-                <TextView
-                    android:id="@+id/textView7"
-                    style="@style/MyText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="15dp"
-                    android:paddingLeft="8dp"
-                    android:text="@string/phone" />
-            </LinearLayout>
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
