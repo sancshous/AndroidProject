@@ -1,4 +1,4 @@
-package com.gmail.shurastarkov2014.lesson1;
+package com.example.androidproject;
 
 import org.junit.Test;
 
