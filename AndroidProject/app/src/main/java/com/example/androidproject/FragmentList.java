@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -28,10 +29,10 @@ public class FragmentList extends Fragment {
         ContactID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentDetails frag2 = new FragmentDetails(R.id.ContactID);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, frag2).addToBackStack(null).commit();
+                fragmentTransaction.replace(R.id.fragment_container, FragmentDetails.newInstance(R.id.ContactID)).
+                        addToBackStack(null).commit();
             }
         });
     }

@@ -24,12 +24,6 @@ public class MainActivity extends AppCompatActivity{
             FragmentTransaction ftrans = fragmentManager.beginTransaction();
             ftrans.add(R.id.fragment_container, frag1).commit();
         }
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            TextView ContactName = (TextView) findViewById(R.id.ContactName);
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) ContactName.getLayoutParams();
-            params.width = 100;
-            ContactName.setLayoutParams(params);
-        }
     }
 }
 
