@@ -1,6 +1,12 @@
 package com.example.androidproject;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +16,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class FragmentDetails extends Fragment {
-    String[] details;
-    public static Fragment newInstance(String[] details) {
+import java.util.List;
+
+public class FragmentDetails extends Fragment{
+    private int personId;
+    private TextView detalName;
+    private TextView detalPhone;
+    private TextView detalMail;
+    private TextView detalDescription;
+
+    SimpleService mService;
+    private boolean isBound;
+    private ServiceConnection serviceConnection;
+
+    public static Fragment newInstance(int personId) {
         Bundle args = new Bundle();
-        args.putStringArray("DETAILS", details);
+        args.putInt("DETAILS", personId);
         Fragment fragment = new FragmentDetails();
         fragment.setArguments(args);
         return fragment;
@@ -25,20 +42,71 @@ public class FragmentDetails extends Fragment {
         if(getActivity() != null){
             getActivity().setTitle("Детали контакта");
         }
-        details = getArguments().getStringArray("DETAILS");
+        personId = getArguments().getInt("DETAILS");
+        serviceConnection = new ServiceConnection() {
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.d("FragmentDetails", "Connected!");
+                mService = ((SimpleService.LocalService) service).getService();
+                mService.register(observer);
+                mService.notifyObserverPerson(personId);
+            }
+
+            public void onServiceDisconnected(ComponentName name) {
+                mService = null;
+                isBound = false;
+            }
+        };
         return inflater.inflate(R.layout.fragment_details, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TextView detalName = view.findViewById(R.id.ContactDetailName);
-        TextView detalPhone = view.findViewById(R.id.ContactDetailPhone);
-        TextView detalMail = view.findViewById(R.id.ContactDetailEmail);
-        TextView detalDescription = view.findViewById(R.id.ContactDetailNotes);
-        detalName.setText(details[0]);
-        detalPhone.setText(details[1]);
-        detalMail.setText(details[2]);
-        detalDescription.setText(details[3]);
+        detalName = view.findViewById(R.id.ContactDetailName);
+        detalPhone = view.findViewById(R.id.ContactDetailPhone);
+        detalMail = view.findViewById(R.id.ContactDetailEmail);
+        detalDescription = view.findViewById(R.id.ContactDetailNotes);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Intent intent = new Intent(getActivity(), SimpleService.class);
+        getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        isBound = true;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (isBound) {
+            getActivity().unbindService(serviceConnection);
+            isBound = false;
+            mService.delete(observer);
+        }
+    }
+
+    private Observer observer = new Observer() {
+        @Override
+        public void updateShort(List<Person> list) {
+            Log.d("FragmentDetails", "this is callback");
+        }
+
+        @Override
+        public void updateFull(Person person) {
+            detalName.setText(person.getName());
+            detalPhone.setText(String.valueOf(person.getPhone()));
+            detalMail.setText(person.getEmail());
+            detalDescription.setText(person.getDescription());
+        }
+    };
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        detalDescription = null;
+        detalMail = null;
+        detalName = null;
+        detalPhone = null;
     }
 }

@@ -4,11 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Person implements Parcelable {
-    private int id;
-    private String name;
-    private long phone;
-    private String email;
-    private String description;
+    private final int id;
+    private final String name;
+    private final long phone;
+    private final String email;
+    private final String description;
 
     public Person(int id, String name, long phone, String email, String description) {
         this.id = id;

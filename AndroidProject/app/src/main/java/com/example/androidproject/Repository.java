@@ -1,0 +1,25 @@
+package com.example.androidproject;
+
+import java.util.Collections;
+import java.util.List;
+
+public class Repository { //типо хранилище контактов
+    private static Repository instance;
+
+    public static synchronized Repository getInstance(){
+        if(instance == null){
+            instance = new Repository();
+        }
+        return instance;
+    }
+
+    private Repository() {
+    }
+
+    private List<Person> persons = Collections.singletonList(new Person(0, "Alex", 88005553535L,
+            "sancshous@gmail.com", "My first contact"));
+
+    public List<Person> getPersons() {
+        return persons;
+    }
+}
