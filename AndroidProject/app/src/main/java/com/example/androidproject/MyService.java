@@ -7,6 +7,7 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -15,14 +16,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class SimpleService extends Service implements Observable{
+public class MyService extends Service implements Observable{
     private final IBinder mBinder = new LocalService();
     private Repository repository = Repository.getInstance();
-    private List<Observer> observers = new ArrayList<>();
+    private WeakReference<List<ObserverList>> observerListWeak;
+    private WeakReference<List<ObserverDetails>> observerDetailsWeak;
+    private List<ObserverList> observersList = new ArrayList<>();
+    private List<ObserverDetails> observersDetails = new ArrayList<>();
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public void onDestroy() {
+        super.onDestroy();
+        observersDetails.clear();
+        observersList.clear();
     }
 
     @Nullable
@@ -32,7 +39,6 @@ public class SimpleService extends Service implements Observable{
     }
 
     public List<Person> getPersonsList() throws ExecutionException, InterruptedException {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<List<Person>> foo = executor.submit(new Callable<List<Person>>() {
             @Override
             public List<Person> call() {
@@ -44,7 +50,6 @@ public class SimpleService extends Service implements Observable{
     }
 
     public Person getFullInfo(int id) throws ExecutionException, InterruptedException {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<List<Person>> foo = executor.submit(new Callable<List<Person>>() {
             @Override
             public List<Person> call() {
@@ -56,21 +61,22 @@ public class SimpleService extends Service implements Observable{
     }
 
     @Override
-    public void register(Observer o) {
-        observers.add(o);
+    public void registerList(ObserverList o) {
+        observerListWeak = new WeakReference<>(observersList);
+        observerListWeak.get().add(o);
     }
 
     @Override
-    public void delete(Observer o) {
-        observers.remove(o);
+    public void registerDetails(ObserverDetails o) {
+        observerDetailsWeak = new WeakReference<>(observersDetails);
+        observerDetailsWeak.get().add(o);
     }
 
     @Override
-    public void notifyObserver(){
+    public void notifyList(){
         try {
-            for (int i = 0; i < observers.size(); i++) {
-                Observer observer = observers.get(i);
-                observer.updateShort(getPersonsList());
+            for (int i = 0; i < observerListWeak.get().size(); i++) {
+                observerListWeak.get().get(i).updateShort(getPersonsList());
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
@@ -78,11 +84,10 @@ public class SimpleService extends Service implements Observable{
     }
 
     @Override
-    public void notifyObserverPerson(int id) {
+    public void notifyDetails(int id) {
         try {
-            for (int i = 0; i < observers.size(); i++) {
-                Observer observer = observers.get(i);
-                observer.updateFull(getFullInfo(id));
+            for (int i = 0; i < observerDetailsWeak.get().size(); i++) {
+                observerDetailsWeak.get().get(i).updateFull(getFullInfo(id));
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
@@ -90,8 +95,8 @@ public class SimpleService extends Service implements Observable{
     }
 
     public class LocalService extends Binder {
-        SimpleService getService(){
-            return SimpleService.this;
+        MyService getService(){
+            return MyService.this;
         }
     }
 }

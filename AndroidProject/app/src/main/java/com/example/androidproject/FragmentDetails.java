@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import java.util.List;
+import com.squareup.leakcanary.RefWatcher;
 
 public class FragmentDetails extends Fragment{
     private int personId;
@@ -25,9 +25,19 @@ public class FragmentDetails extends Fragment{
     private TextView detalMail;
     private TextView detalDescription;
 
-    SimpleService mService;
+    private MyService mService;
     private boolean isBound;
     private ServiceConnection serviceConnection;
+
+    private ObserverDetails observer = new ObserverDetails() {
+        @Override
+        public void updateFull(Person person) {
+            detalName.setText(person.getName());
+            detalPhone.setText(String.valueOf(person.getPhone()));
+            detalMail.setText(person.getEmail());
+            detalDescription.setText(person.getDescription());
+        }
+    };
 
     public static Fragment newInstance(int personId) {
         Bundle args = new Bundle();
@@ -46,9 +56,9 @@ public class FragmentDetails extends Fragment{
         serviceConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
                 Log.d("FragmentDetails", "Connected!");
-                mService = ((SimpleService.LocalService) service).getService();
-                mService.register(observer);
-                mService.notifyObserverPerson(personId);
+                mService = ((MyService.LocalService) service).getService();
+                mService.registerDetails(observer);
+                mService.notifyDetails(personId);
             }
 
             public void onServiceDisconnected(ComponentName name) {
@@ -71,35 +81,26 @@ public class FragmentDetails extends Fragment{
     @Override
     public void onStart() {
         super.onStart();
-        Intent intent = new Intent(getActivity(), SimpleService.class);
+        Intent intent = new Intent(getActivity(), MyService.class);
         getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         isBound = true;
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
         if (isBound) {
             getActivity().unbindService(serviceConnection);
             isBound = false;
-            mService.delete(observer);
         }
     }
 
-    private Observer observer = new Observer() {
-        @Override
-        public void updateShort(List<Person> list) {
-            Log.d("FragmentDetails", "this is callback");
-        }
-
-        @Override
-        public void updateFull(Person person) {
-            detalName.setText(person.getName());
-            detalPhone.setText(String.valueOf(person.getPhone()));
-            detalMail.setText(person.getEmail());
-            detalDescription.setText(person.getDescription());
-        }
-    };
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+        refWatcher.watch(this);
+    }
 
     @Override
     public void onDestroyView() {

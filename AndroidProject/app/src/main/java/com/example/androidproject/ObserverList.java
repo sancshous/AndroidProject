@@ -2,7 +2,6 @@ package com.example.androidproject;
 
 import java.util.List;
 
-public interface Observer {
+public interface ObserverList {
     void updateShort(List<Person> list);
-    void updateFull(Person person);
 }

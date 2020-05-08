@@ -1,8 +1,8 @@
 package com.example.androidproject;
 
 public interface Observable {
-    void register(Observer o);
-    void delete(Observer o);
-    void notifyObserver();
-    void notifyObserverPerson(int id);
+    void registerList(ObserverList o);
+    void registerDetails(ObserverDetails o);
+    void notifyList();
+    void notifyDetails(int id);
 }

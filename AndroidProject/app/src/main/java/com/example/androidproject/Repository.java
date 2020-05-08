@@ -3,7 +3,7 @@ package com.example.androidproject;
 import java.util.Collections;
 import java.util.List;
 
-public class Repository { //типо хранилище контактов
+public class Repository {
     private static Repository instance;
 
     public static synchronized Repository getInstance(){
@@ -16,7 +16,7 @@ public class Repository { //типо хранилище контактов
     private Repository() {
     }
 
-    private List<Person> persons = Collections.singletonList(new Person(0, "Alex", 88005553535L,
+    private List<Person> persons = Collections.singletonList(new Person(0, "Alex", 880055535359L,
             "sancshous@gmail.com", "My first contact"));
 
     public List<Person> getPersons() {

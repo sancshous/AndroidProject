@@ -20,18 +20,28 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.squareup.leakcanary.RefWatcher;
+
 import java.util.List;
 
-public class FragmentList extends Fragment implements Observer{
+public class FragmentList extends Fragment{
     private TextView contactName;
     private TextView contactPhone;
     private ConstraintLayout contactId;
     private List<Person> personList;
 
-    private SimpleService mService;
+    private MyService mService;
     private boolean isBound;
-
     private ServiceConnection serviceConnection;
+
+    private ObserverList observerList = new ObserverList() {
+        @Override
+        public void updateShort(List<Person> list) {
+            personList = list;
+            contactName.setText(list.get(0).getName());
+            contactPhone.setText(String.valueOf(list.get(0).getPhone()));
+        }
+    };
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
@@ -41,9 +51,9 @@ public class FragmentList extends Fragment implements Observer{
         serviceConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
                 Log.d("Из фрагмента", "Связь с сервисом установлена");
-                mService = ((SimpleService.LocalService) service).getService();
-                mService.register(FragmentList.this);
-                mService.notifyObserver();
+                mService = ((MyService.LocalService) service).getService();
+                mService.registerList(observerList);
+                mService.notifyList();
             }
 
             public void onServiceDisconnected(ComponentName name) {
@@ -74,31 +84,25 @@ public class FragmentList extends Fragment implements Observer{
     @Override
     public void onStart() {
         super.onStart();
-        Intent intent = new Intent(getActivity(), SimpleService.class);
+        Intent intent = new Intent(getActivity(), MyService.class);
         getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         isBound = true;
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
         if (isBound) {
             getActivity().unbindService(serviceConnection);
             isBound = false;
-            mService.delete(FragmentList.this);
         }
     }
 
     @Override
-    public void updateShort(List<Person> list) {
-        FragmentList.this.personList = list;
-        contactName.setText(list.get(0).getName());
-        contactPhone.setText(String.valueOf(list.get(0).getPhone()));
-    }
-
-    @Override
-    public void updateFull(Person person) {
-        Log.d("FragmentList", "this is callback");
+    public void onDestroy() {
+        super.onDestroy();
+        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+        refWatcher.watch(this);
     }
 
     @Override
