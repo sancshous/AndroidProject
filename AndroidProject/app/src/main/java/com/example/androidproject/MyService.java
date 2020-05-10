@@ -7,10 +7,11 @@ import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 
-
+import java.lang.ref.WeakReference;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-public class MyService extends Service{
+
+public class MyService extends Service {
     private final IBinder mBinder = new LocalService();
     private Repository repository = Repository.getInstance();
     private ExecutorService executor = Executors.newCachedThreadPool();
@@ -22,30 +23,36 @@ public class MyService extends Service{
     }
 
     public void getPersonsList(final ObserverList callback) {
+        final WeakReference<ObserverList> weakCallbackList = new WeakReference<>(callback);
         executor.submit(new Runnable() {
             @Override
             public void run() {
-                callback.updateShort(repository.getPersons());
+                weakCallbackList.get().updateShort(repository.getPersons());
                 System.out.println(Thread.currentThread().getName());
             }
         });
-        executor.shutdown();
     }
 
     public void getFullInfo(final int id, final ObserverDetails callback) {
+        final WeakReference<ObserverDetails> weakCallbakInfo = new WeakReference<>(callback);
         executor.submit(new Runnable() {
             @Override
             public void run() {
-                callback.updateFull(repository.getPersons().get(id));
+                weakCallbakInfo.get().updateFull(repository.getPersons().get(id));
                 System.out.println(Thread.currentThread().getName());
             }
         });
-        executor.shutdown();
     }
 
     public class LocalService extends Binder {
         MyService getService(){
             return MyService.this;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        executor.shutdown();
     }
 }

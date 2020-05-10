@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,6 +30,7 @@ public class FragmentList extends Fragment{
     private TextView contactPhone;
     private ConstraintLayout contactId;
     private List<Person> personList;
+    private Handler handler = new Handler();
 
     private static final String TAG = "myLogs";
 
@@ -37,12 +40,18 @@ public class FragmentList extends Fragment{
 
     private ObserverList observerList = new ObserverList() {
         @Override
-        public void updateShort(List<Person> list) {
-            personList = list;
-            if (contactName != null)
-                contactName.setText(list.get(0).getName());
-            if (contactPhone != null)
-                contactPhone.setText(String.valueOf(list.get(0).getPhone()));
+        public void updateShort(final List<Person> list) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    personList = list;
+                    if ((list.get(0).getName() != null) || (list.get(0).getPhone() != 0)) {
+                        contactName.setText(list.get(0).getName());
+                        contactPhone.setText(String.valueOf(list.get(0).getPhone()));
+                        System.out.println("Поток с view: " + Thread.currentThread().getName());
+                    }
+                }
+            });
         }
     };
 

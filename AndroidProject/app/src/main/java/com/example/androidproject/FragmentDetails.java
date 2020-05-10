@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ public class FragmentDetails extends Fragment{
     private TextView detalPhone;
     private TextView detalMail;
     private TextView detalDescription;
+    private Handler handler = new Handler();
 
     private MyService mService;
     private boolean isBound;
@@ -31,15 +33,19 @@ public class FragmentDetails extends Fragment{
 
     private ObserverDetails observer = new ObserverDetails() {
         @Override
-        public void updateFull(Person person) {
-            if (detalName != null)
-                detalName.setText(person.getName());
-            if (detalPhone != null)
-                detalPhone.setText(String.valueOf(person.getPhone()));
-            if (detalMail != null)
-                detalMail.setText(person.getEmail());
-            if (detalDescription != null)
-                detalDescription.setText(person.getDescription());
+        public void updateFull(final Person person) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if((person.getName() != null) || (person.getPhone() != 0) || (person.getEmail() != null) || (person.getDescription() != null)) {
+                        detalName.setText(person.getName());
+                        detalPhone.setText(String.valueOf(person.getPhone()));
+                        detalMail.setText(person.getEmail());
+                        detalDescription.setText(person.getDescription());
+                        System.out.println("Поток с view: " + Thread.currentThread().getName());
+                    }
+                }
+            });
         }
     };
 
