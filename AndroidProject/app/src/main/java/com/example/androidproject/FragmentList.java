@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -30,6 +29,8 @@ public class FragmentList extends Fragment{
     private ConstraintLayout contactId;
     private List<Person> personList;
 
+    private static final String TAG = "myLogs";
+
     private MyService mService;
     private boolean isBound;
     private ServiceConnection serviceConnection;
@@ -38,22 +39,21 @@ public class FragmentList extends Fragment{
         @Override
         public void updateShort(List<Person> list) {
             personList = list;
-            contactName.setText(list.get(0).getName());
-            contactPhone.setText(String.valueOf(list.get(0).getPhone()));
+            if (contactName != null)
+                contactName.setText(list.get(0).getName());
+            if (contactPhone != null)
+                contactPhone.setText(String.valueOf(list.get(0).getPhone()));
         }
     };
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-        if(getActivity() != null){
-            getActivity().setTitle("Список контактов");
-        }
+        requireActivity().setTitle("Список контактов");
         serviceConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
                 Log.d("Из фрагмента", "Связь с сервисом установлена");
                 mService = ((MyService.LocalService) service).getService();
-                mService.registerList(observerList);
-                mService.notifyList();
+                mService.getPersonsList(observerList);
             }
 
             public void onServiceDisconnected(ComponentName name) {
@@ -73,10 +73,14 @@ public class FragmentList extends Fragment{
         contactId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, FragmentDetails.newInstance(personList.get(0).getId()))
-                        .addToBackStack(null).commit();
+                if ((personList.size() > 0) && (personList != null)) {
+                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.fragment_container, FragmentDetails.newInstance(personList.get(0).getId()))
+                            .addToBackStack(null).commit();
+                }
+                else
+                    Log.d(TAG, "personList еще не загружен");
             }
         });
     }
@@ -85,7 +89,7 @@ public class FragmentList extends Fragment{
     public void onStart() {
         super.onStart();
         Intent intent = new Intent(getActivity(), MyService.class);
-        getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        requireActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         isBound = true;
     }
 
@@ -93,7 +97,7 @@ public class FragmentList extends Fragment{
     public void onStop() {
         super.onStop();
         if (isBound) {
-            getActivity().unbindService(serviceConnection);
+            requireActivity().unbindService(serviceConnection);
             isBound = false;
         }
     }
@@ -101,7 +105,7 @@ public class FragmentList extends Fragment{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+        RefWatcher refWatcher = App.getRefWatcher(requireActivity());
         refWatcher.watch(this);
     }
 
@@ -113,4 +117,3 @@ public class FragmentList extends Fragment{
         contactPhone = null;
     }
 }
-

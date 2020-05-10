@@ -16,7 +16,7 @@ public class Repository {
     private Repository() {
     }
 
-    private List<Person> persons = Collections.singletonList(new Person(0, "Alex", 880055535359L,
+    private List<Person> persons = Collections.singletonList(new Person(0, "Alex", 88005553535L,
             "sancshous@gmail.com", "My first contact"));
 
     public List<Person> getPersons() {

@@ -32,10 +32,14 @@ public class FragmentDetails extends Fragment{
     private ObserverDetails observer = new ObserverDetails() {
         @Override
         public void updateFull(Person person) {
-            detalName.setText(person.getName());
-            detalPhone.setText(String.valueOf(person.getPhone()));
-            detalMail.setText(person.getEmail());
-            detalDescription.setText(person.getDescription());
+            if (detalName != null)
+                detalName.setText(person.getName());
+            if (detalPhone != null)
+                detalPhone.setText(String.valueOf(person.getPhone()));
+            if (detalMail != null)
+                detalMail.setText(person.getEmail());
+            if (detalDescription != null)
+                detalDescription.setText(person.getDescription());
         }
     };
 
@@ -49,16 +53,13 @@ public class FragmentDetails extends Fragment{
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(getActivity() != null){
-            getActivity().setTitle("Детали контакта");
-        }
+        requireActivity().setTitle("Детали контакта");
         personId = getArguments().getInt("DETAILS");
         serviceConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
                 Log.d("FragmentDetails", "Connected!");
                 mService = ((MyService.LocalService) service).getService();
-                mService.registerDetails(observer);
-                mService.notifyDetails(personId);
+                mService.getFullInfo(personId, observer);
             }
 
             public void onServiceDisconnected(ComponentName name) {
@@ -82,7 +83,7 @@ public class FragmentDetails extends Fragment{
     public void onStart() {
         super.onStart();
         Intent intent = new Intent(getActivity(), MyService.class);
-        getActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        requireActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         isBound = true;
     }
 
@@ -90,7 +91,7 @@ public class FragmentDetails extends Fragment{
     public void onStop() {
         super.onStop();
         if (isBound) {
-            getActivity().unbindService(serviceConnection);
+            requireActivity().unbindService(serviceConnection);
             isBound = false;
         }
     }
@@ -98,7 +99,7 @@ public class FragmentDetails extends Fragment{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        RefWatcher refWatcher = App.getRefWatcher(getActivity());
+        RefWatcher refWatcher = App.getRefWatcher(requireActivity());
         refWatcher.watch(this);
     }
 
