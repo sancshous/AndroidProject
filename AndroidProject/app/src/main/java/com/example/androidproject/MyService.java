@@ -27,7 +27,9 @@ public class MyService extends Service {
         executor.submit(new Runnable() {
             @Override
             public void run() {
-                weakCallbackList.get().updateShort(repository.getPersons());
+                ObserverList observerList = weakCallbackList.get();
+                if (observerList != null)
+                    observerList.updateShort(repository.getPersons());
                 System.out.println(Thread.currentThread().getName());
             }
         });
@@ -38,7 +40,9 @@ public class MyService extends Service {
         executor.submit(new Runnable() {
             @Override
             public void run() {
-                weakCallbakInfo.get().updateFull(repository.getPersons().get(id));
+                ObserverDetails observerDetails = weakCallbakInfo.get();
+                if (observerDetails != null)
+                    observerDetails.updateFull(repository.getPersons().get(id));
                 System.out.println(Thread.currentThread().getName());
             }
         });
