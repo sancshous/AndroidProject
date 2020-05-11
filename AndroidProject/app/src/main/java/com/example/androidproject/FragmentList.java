@@ -45,7 +45,7 @@ public class FragmentList extends Fragment{
                 @Override
                 public void run() {
                     personList = list;
-                    if ((contactName != null) || (contactPhone != null)) {
+                    if ((contactName != null) && (contactPhone != null)) {
                         contactName.setText(list.get(0).getName());
                         contactPhone.setText(String.valueOf(list.get(0).getPhone()));
                         System.out.println("Поток с view: " + Thread.currentThread().getName());

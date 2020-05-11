@@ -37,7 +37,7 @@ public class FragmentDetails extends Fragment{
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if((detalName != null) || (detalPhone != null) || (detalMail != null) || (detalDescription != null)) {
+                    if((detalName != null) && (detalPhone != null) && (detalMail != null) && (detalDescription != null)) {
                         detalName.setText(person.getName());
                         detalPhone.setText(String.valueOf(person.getPhone()));
                         detalMail.setText(person.getEmail());
