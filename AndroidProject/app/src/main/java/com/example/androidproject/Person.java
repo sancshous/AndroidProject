@@ -1,42 +1,23 @@
 package com.example.androidproject;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import java.util.GregorianCalendar;
 
-public class Person implements Parcelable {
+public class Person {
     private final int id;
     private final String name;
     private final long phone;
     private final String email;
     private final String description;
+    private final GregorianCalendar birthday;
 
-    public Person(int id, String name, long phone, String email, String description) {
+    public Person(int id, String name, long phone, String email, String description, GregorianCalendar birthday) {
         this.id = id;
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.description = description;
+        this.birthday = birthday;
     }
-
-    protected Person(Parcel in) {
-        id = in.readInt();
-        name = in.readString();
-        phone = in.readLong();
-        email = in.readString();
-        description = in.readString();
-    }
-
-    public static final Creator<Person> CREATOR = new Creator<Person>() {
-        @Override
-        public Person createFromParcel(Parcel in) {
-            return new Person(in);
-        }
-
-        @Override
-        public Person[] newArray(int size) {
-            return new Person[size];
-        }
-    };
 
     public int getId() {
         return id;
@@ -58,17 +39,7 @@ public class Person implements Parcelable {
         return description;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(name);
-        dest.writeLong(phone);
-        dest.writeString(email);
-        dest.writeString(description);
+    public GregorianCalendar getBirthday() {
+        return birthday;
     }
 }

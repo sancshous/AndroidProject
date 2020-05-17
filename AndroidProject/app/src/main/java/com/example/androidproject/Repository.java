@@ -1,6 +1,8 @@
 package com.example.androidproject;
 
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class Repository {
@@ -17,7 +19,7 @@ public class Repository {
     }
 
     private List<Person> persons = Collections.singletonList(new Person(0, "Alex", 88005553535L,
-            "sancshous@gmail.com", "My first contact"));
+            "sancshous@gmail.com", "My first contact", new GregorianCalendar(1997, Calendar.MAY, 17)));
 
     public List<Person> getPersons() {
         return persons;

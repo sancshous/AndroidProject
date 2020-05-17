@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="400dp">
-
-
     <ImageView
         android:id="@+id/ContactDetailPhoto"
         android:layout_width="0dp"
@@ -14,8 +14,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_gallery" />
-
+        app:srcCompat="@android:drawable/ic_menu_gallery"
+        android:contentDescription="TODO" />
     <TextView
         android:id="@+id/ContactDetailName"
         style="@style/MyTextMarginPadding"
@@ -26,7 +26,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/ContactDetailPhoto"
         app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/ContactDetailPhone"
         style="@style/MyTextMarginPadding"
@@ -36,7 +35,6 @@
         app:layout_constraintHorizontal_bias="0.531"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline" />
-
     <TextView
         android:id="@+id/ContactDetailEmail"
         style="@style/MyTextMarginPadding"
@@ -46,7 +44,6 @@
         app:layout_constraintHorizontal_bias="0.421"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ContactDetailPhone" />
-
     <TextView
         android:id="@+id/ContactDetailNotes"
         style="@style/MyTextMarginPadding"
@@ -55,19 +52,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ContactDetailEmail" />
-
-    <androidx.constraintlayout.widget.Guideline
+   <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="150dp" />
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="150dp" />
-
+    <TextView
+        android:id="@+id/ContactDetailsBirthday"
+        style="@style/MyTextMarginPadding"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ContactDetailNotes" />
+    <Switch
+        android:id="@+id/ContactDetailsSwitcher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/birhdaySwitcher"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.258"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/ContactDetailNotes" />
 </androidx.constraintlayout.widget.ConstraintLayout>
