@@ -2,4 +2,7 @@
     <string name="app_name">Cписок Контактов</string>
     <string name="birhdaySwitcher">Включить напоминания</string>
     <string name="notificationMessage">Сегодня день рождения у </string>
+    <string name="TitleDetail">Детали контакта</string>
+    <string name="TitleList">Список контактов</string>
+    <string name="Remind">Напоминание</string>
 </resources>
