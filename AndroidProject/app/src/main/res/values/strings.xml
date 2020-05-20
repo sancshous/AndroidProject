@@ -5,4 +5,5 @@
     <string name="TitleDetail">Детали контакта</string>
     <string name="TitleList">Список контактов</string>
     <string name="Remind">Напоминание</string>
+    <string name="ChanelDescription">Description</string>
 </resources>

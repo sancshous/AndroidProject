@@ -6,7 +6,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -31,7 +30,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class FragmentDetails extends Fragment{
-    private static final String pref = "settings";
+    private static final String TAG = "AlarmManager";
 
     private int personId;
     private TextView detalName;
@@ -42,7 +41,6 @@ public class FragmentDetails extends Fragment{
     private Switch switchNotify;
 
     private Handler handler = new Handler();
-    private SharedPreferences settings;
 
     private MyService mService;
     private AlarmManager alarmManager;
@@ -92,7 +90,6 @@ public class FragmentDetails extends Fragment{
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         requireActivity().setTitle(getString(R.string.TitleDetail));
         personId = requireArguments().getInt("DETAILS");
-        settings = requireActivity().getSharedPreferences(pref, Context.MODE_PRIVATE);
         alarmManager = (AlarmManager) requireActivity().getSystemService(Context.ALARM_SERVICE);
         serviceConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -119,8 +116,10 @@ public class FragmentDetails extends Fragment{
         detalBirthday = view.findViewById(R.id.ContactDetailsBirthday);
         switchNotify = view.findViewById(R.id.ContactDetailsSwitcher);
         intent = new Intent(getActivity(), BirthdayAlarmReceiver.class);
-        if(settings.contains("state")){
-            switchNotify.setChecked(settings.getBoolean("state", false));
+        boolean isAlarmUp = PendingIntent.getBroadcast(getActivity(), 0, intent, PendingIntent.FLAG_NO_CREATE) != null;
+        if(isAlarmUp){
+            switchNotify.setChecked(true);
+            Log.d(TAG, "Alarm Service already started");
         }
     }
 
@@ -130,15 +129,15 @@ public class FragmentDetails extends Fragment{
         switchNotify.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences.Editor editor = settings.edit();
-                if(isChecked){
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-                    editor.putBoolean("state", true).apply();
-                }
-                else{
-                    alarmManager.cancel(pendingIntent);
-                    pendingIntent.cancel();
-                    editor.putBoolean("state", false).apply();
+                if(pendingIntent != null){
+                    if(isChecked){
+                        Log.d(TAG, "Start Alarm Service");
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                    }
+                    else{
+                        alarmManager.cancel(pendingIntent);
+                        pendingIntent.cancel();
+                    }
                 }
             }
         });
@@ -148,8 +147,8 @@ public class FragmentDetails extends Fragment{
         if(intent != null){
             intent.putExtra("PERSON_ID", personId);
             intent.putExtra("MESSAGE", requireActivity().getString(R.string.notificationMessage)+" "+name);
+            pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, 0);
         }
-        pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, 0);
     }
 
     @Override
