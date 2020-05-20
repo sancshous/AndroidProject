@@ -57,7 +57,7 @@ public class FragmentList extends Fragment{
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-        requireActivity().setTitle("Список контактов");
+        requireActivity().setTitle(getString(R.string.TitleList));
         serviceConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder service) {
                 Log.d("Из фрагмента", "Связь с сервисом установлена");

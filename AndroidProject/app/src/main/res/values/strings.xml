@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Cписок Контактов</string>
-    <string name="name">Alex</string>
-    <string name="phone">88005553535</string>
-    <string name="email">sancshous@gmail.com</string>
-    <string name="notes">Заметки</string>
+    <string name="birhdaySwitcher">Включить напоминания</string>
+    <string name="notificationMessage">Сегодня день рождения у </string>
+    <string name="TitleDetail">Детали контакта</string>
+    <string name="TitleList">Список контактов</string>
+    <string name="Remind">Напоминание</string>
+    <string name="ChanelDescription">Description</string>
 </resources>

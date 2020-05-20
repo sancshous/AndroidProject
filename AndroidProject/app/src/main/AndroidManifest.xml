@@ -22,6 +22,8 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+
+        <receiver android:name=".BirthdayAlarmReceiver" />
     </application>
 
 </manifest>
